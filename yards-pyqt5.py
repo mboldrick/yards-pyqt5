@@ -22,37 +22,92 @@ class MainWindow(qtw.QWidget):
     def converterUserInterface(self):
         """Build the user interface for the converter."""
         # Create the widgets
+        self.instructions_label = qtw.QLabel(
+            "Enter a distance in yards or meters. The other value will populate dynamically.",
+            self,
+        )
+        self.instructions_label.setWordWrap(True)
+
         self.yards_label = qtw.QLabel("Yards:", self)
         self.yards_input = qtw.QLineEdit(self)
-        self.yards_input.setPlaceholderText("Enter yards here")
-        self.yards_input.setValidator(qtg.QIntValidator(0, 1000000, self))
+        # self.yards_input.setPlaceholderText("Enter yards here")
+        self.yards_input.setValidator(qtg.QDoubleValidator(0, 1_000_000, 2, self))
 
         self.meters_label = qtw.QLabel("Meters:", self)
-        self.meters_display = qtw.QLineEdit(self)
-        # self.meters_display.setAlignment(qtc.Qt.AlignRight)
+        self.meters_input = qtw.QLineEdit(self)
+        self.meters_input.setValidator(qtg.QDoubleValidator(0, 1_000_000, 2, self))
+        # self.meters_input.setAlignment(qtc.Qt.AlignRight)
 
-        self.convert_btn = qtw.QPushButton("Convert", self)
-        self.convert_btn.clicked.connect(self.convertDistance)
+        self.yards_input.textEdited.connect(self.convertYardsToMeters)
+        self.meters_input.textEdited.connect(self.convertMetersToYards)
+
+        # self.convert_btn = qtw.QPushButton("Convert", self)
+        # self.convert_btn.clicked.connect(self.convertDistance)
 
         # Create the layout
         grid_layout = qtw.QGridLayout()
-        grid_layout.addWidget(self.yards_label, 0, 0)
-        grid_layout.addWidget(self.yards_input, 0, 1)
-        grid_layout.addWidget(self.convert_btn, 0, 2)
-        grid_layout.addWidget(self.meters_label, 0, 3)
-        grid_layout.addWidget(self.meters_display, 0, 4)
+        grid_layout.addWidget(self.instructions_label, 0, 0, 1, 5)
+        grid_layout.addWidget(self.yards_label, 1, 0)
+        grid_layout.addWidget(self.yards_input, 1, 1)
+        grid_layout.addWidget(qtw.QLabel("=", self), 1, 2)
+        grid_layout.addWidget(self.meters_label, 1, 3)
+        grid_layout.addWidget(self.meters_input, 1, 4)
         self.setLayout(grid_layout)
 
-    def convertDistance(self):
+    def convertYardsToMeters(self):
         """Convert the distance from yards to meters."""
-        # Get the yards value from the input field
-        yards = self.yards_input.text()
+        # Get the yards value from the input field and remove commas
+        yards = self.yards_input.text().replace(",", "")
+        # Check if the input string is empty
+        if yards:
+            try:
+                # Cast the input to a number, then convert it to meters (assuming 1 meter = 1.09361 yards)
+                meters = float(yards) * 0.9144
+                # Format the result so that it doesn't have trailing zeros
+                formatted_meters = f"{meters:,.4f}".rstrip("0").rstrip(".")
+                # Display the result
+                self.meters_input.setText(formatted_meters)
+            except ValueError:
+                # Handle the case where the conversion to float fails
+                # TODO - add an error message to the UI
+                self.meters_input.setText("")
+        else:
+            self.meters_input.setText("")
 
-        # Convert yards to meters
-        meters = int(yards) * 0.9144
+    def convertMetersToYards(self):
+        """Convert the distance from meters to yards."""
+        # Get the meters value from the input field and remove commas
+        meters = self.meters_input.text().replace(",", "")
+        # Check if the input string is empty
+        if meters:
+            try:
+                # Cast the input to a number, then convert it to yards (assuming 1 meter = 1.09361 yards)
+                yards = float(meters) * 1.09361
+                # Format the result so that it doesn't have trailing zeros
+                formatted_yards = f"{yards:,.4f}".rstrip("0").rstrip(".")
+                # Display the result
+                self.yards_input.setText(formatted_yards)
+            except ValueError:
+                # Handle the case where the conversion to float fails
+                # TODO - add an error message to the UI
+                self.yards_input.setText("")
+        else:
+            self.yards_input.setText("")
 
-        # Display the result
-        self.meters_display.setText(str(meters))
+    # def convertMetersToYards(self):
+    #     """Convert the distance from meters to yards."""
+    #     # Get the meters value from the input field
+    #     meters = self.meters_input.text()
+    #     # Check if field is blank
+    #     if meters == "":
+    #         self.yards_input.setText("")
+    #     else:
+    #         # Convert meters to yards
+    #         yards = float(meters) * 1.09361
+    #         # Format the result so that it doesn't have trailing zeros
+    #         formatted_yards = f"{yards:,.4f}".rstrip("0").rstrip(".")
+    #         # Display the result
+    #         self.yards_input.setText(formatted_yards)
 
 
 if __name__ == "__main__":
