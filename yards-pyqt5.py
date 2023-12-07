@@ -14,7 +14,7 @@ class MainWindow(qtw.QWidget):
     def initializeUI(self):
         """Initialize the window and display its contents to the screen."""
         self.setWindowTitle("Swim Distance Conversion")
-        self.setGeometry(100, 100, 400, 230)
+        self.setGeometry(100, 100, 400, 120)
         self.converterUserInterface()
 
         self.show()
@@ -27,6 +27,7 @@ class MainWindow(qtw.QWidget):
             self,
         )
         self.instructions_label.setWordWrap(True)
+        self.instructions_label.setAlignment(qtc.Qt.AlignTop)
 
         self.yards_label = qtw.QLabel("Yards:", self)
         self.yards_input = qtw.QLineEdit(self)
@@ -41,9 +42,6 @@ class MainWindow(qtw.QWidget):
         self.yards_input.textEdited.connect(self.convertYardsToMeters)
         self.meters_input.textEdited.connect(self.convertMetersToYards)
 
-        # self.convert_btn = qtw.QPushButton("Convert", self)
-        # self.convert_btn.clicked.connect(self.convertDistance)
-
         # Create the layout
         grid_layout = qtw.QGridLayout()
         grid_layout.addWidget(self.instructions_label, 0, 0, 1, 5)
@@ -52,6 +50,8 @@ class MainWindow(qtw.QWidget):
         grid_layout.addWidget(qtw.QLabel("=", self), 1, 2)
         grid_layout.addWidget(self.meters_label, 1, 3)
         grid_layout.addWidget(self.meters_input, 1, 4)
+        grid_layout.setAlignment(qtc.Qt.AlignCenter)
+        grid_layout.setVerticalSpacing(20)
         self.setLayout(grid_layout)
 
     def convertYardsToMeters(self):
@@ -93,21 +93,6 @@ class MainWindow(qtw.QWidget):
                 self.yards_input.setText("")
         else:
             self.yards_input.setText("")
-
-    # def convertMetersToYards(self):
-    #     """Convert the distance from meters to yards."""
-    #     # Get the meters value from the input field
-    #     meters = self.meters_input.text()
-    #     # Check if field is blank
-    #     if meters == "":
-    #         self.yards_input.setText("")
-    #     else:
-    #         # Convert meters to yards
-    #         yards = float(meters) * 1.09361
-    #         # Format the result so that it doesn't have trailing zeros
-    #         formatted_yards = f"{yards:,.4f}".rstrip("0").rstrip(".")
-    #         # Display the result
-    #         self.yards_input.setText(formatted_yards)
 
 
 if __name__ == "__main__":
