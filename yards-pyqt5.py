@@ -32,12 +32,10 @@ class MainWindow(qtw.QWidget):
         self.yards_label = qtw.QLabel("Yards:", self)
         self.yards_input = qtw.QLineEdit(self)
         self.yards_input.setValidator(qtg.QDoubleValidator(0, 1_000_000, 2, self))
-        self.yards_input.editingFinished.connect(self.formatNumber)
 
         self.meters_label = qtw.QLabel("Meters:", self)
         self.meters_input = qtw.QLineEdit(self)
         self.meters_input.setValidator(qtg.QDoubleValidator(0, 1_000_000, 2, self))
-        self.meters_input.editingFinished.connect(self.formatNumber)
 
         self.yards_input.textEdited.connect(self.convertYardsToMeters)
         self.meters_input.textEdited.connect(self.convertMetersToYards)
@@ -93,25 +91,6 @@ class MainWindow(qtw.QWidget):
                 self.yards_input.setText("")
         else:
             self.yards_input.setText("")
-
-    def formatNumber(self):
-        """Format the number in the input field."""
-        # Determine which button was clicked
-        sender = self.sender()
-        print("formatNumber called")
-        if sender == self.yards_input:
-            print("Yards editing complete")
-        elif sender == self.meters_input:
-            print("Meters editing complete")
-
-        # Get the value from the input field and remove commas
-        formatted_value = sender.text().replace(",", "")
-        print(f"sender.text(): {sender.text()}  formatted_value: {formatted_value}")
-        # try:
-        #     sender.setText(f"{float(sender.text()):,.4f}".rstrip("0").rstrip("."))
-        # except ValueError:
-        #     sender.setText("")
-        #     print("Invalid number")
 
 
 if __name__ == "__main__":
